@@ -1,0 +1,41 @@
+Connect-AzAccount -TenantId e1f45dd9-9918-4f3e-94a4-384ab67f35c6
+Get-AzLocation
+New-AzResourceGroup -Name myResourceGroup -Location westeurope 
+
+Remove-AzResourceGroup -Name myResourceGroup
+
+Taskkill.exe /im rdpclip.exe
+Rdpclip.exe
+Install-WindowsFeature -name Web-Server -IncludeManagementTools
+
+New-AzRoleDefinition -InputFile ./customRole.json
+New-AzRoleAssignment -ObjectId 02136651-c161-48de-a201-39323acb25e5 -RoleDefinitionName LAAzureAdmin -ResourceGroupName myResourceGroup
+
+
+
+
+az role definition create --role-definition ./customRole.json
+az role assignment create --role LAAzureAdmin --assignee 02136651-c161-48de-a201-39323acb25e5 --resource-group myResourceGroup
+
+New-AzureRmResourceGroup -Name test -Location "ukwest"  
+
+New resource group: `New-AzureRmResourceGroup -name deploytestrg -Location "Australia Southeast"` - Secure password: `$pw = Read-Host "Enter Pass" -AsSecureString` - New deployment: `New-AzureRmResourceGroupDeployment -ResourceGroupName deploytestrg -TemplateUri uri -adminUsername adm-jlee -adminPassword $pw`
+New-AzureRmDeployment -Name "test" -Location "ukwest" -TemplateFile ./resource.json
+
+
+
+interview_temp@cirruspoc.onmicrosoft.com
+Xato3347
+
+1. Create a new user account on this tenant joe.bloggs
+
+2. Create an Azure Active Directory service principal called joessp and log into it with powershell.
+
+3. Create an ARM template and parameter file which creates a resource group called test.  Deploy it via powershell (using the interview@stephenrichardsonraoutlook.onmicrosoft.com credentials).
+
+4. Create a custom role which contains all of the Actions of VIRTUAL MACHINE CONTRIBUTOR in addition to the ability to Register an Azure RM Resource Provider (Hint: .  Assign this role to Joe.Bloggs
+
+5. Create a custom policy which denies the ability to create a PUBLIC IP address, assign this policy to the subcription and test it.
+
+
+Guys can you hear me

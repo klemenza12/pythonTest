@@ -1,0 +1,14 @@
+{
+  "Name": "LAAzureAdmin",
+  "IsCustom": "true",
+  "Description": "testing purposes",
+  "Actions": [
+      "Microsoft.Compute/*",
+      "Microsoft.Storage/*",
+      "Microsoft.Support/*"
+  ],
+  "NotActions": [],
+  "AssignableScopes": [
+      "/subscriptions/88f625d3-a565-4fea-82bd-b97d7958d7f4"
+  ]
+}

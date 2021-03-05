@@ -1,0 +1,61 @@
+New-AzVm `
+    -ResourceGroupName "myResourceGroup" `
+    -Name "myVM" `
+    -Location "westeurope" `
+    -VirtualNetworkName "myVnet" `
+    -SubnetName "mySubnet" `
+    -SecurityGroupName "myNetworkSecurityGroup" `
+    -PublicIpAddressName "myPublicIpAddress" `
+    -OpenPorts 80,3389
+
+    
+Get-AzPublicIpAddress -ResourceGroupName "myResourceGroup" | Select "IpAddress"    
+
+# Get a reference to the resource group that is the scope of the assignment
+$rg = Get-AzResourceGroup -Name 'myResourceGroup'
+
+# Get a reference to the built-in policy definition to assign
+$definition = Get-AzPolicyDefinition | Where-Object { $_.Properties.DisplayName -eq 'Append a tag and its value to resources' }
+
+# Create the policy assignment with the built-in definition against your resource group
+New-AzPolicyAssignment -Name 'append-missing-tag' -DisplayName 'Append a tag and its value to resources' -Scope $rg.ResourceId -PolicyDefinition $definition
+
+# Get the resources in your resource group that are non-compliant to the policy assignment
+Get-AzPolicyState -ResourceGroupName $rg.ResourceGroupName -PolicyAssignmentName 'append-missing-tag' -Filter 'IsCompliant eq false'
+
+$resourceGroupName = Read-Host -Prompt "Enter the Resource Group name"
+$location = Read-Host -Prompt "Enter the location (i.e. centralus)"
+$adminUsername = Read-Host -Prompt "Enter the administrator username"
+$adminPassword = Read-Host -Prompt "Enter the administrator password" -AsSecureString
+$dnsLabelPrefix = Read-Host -Prompt "Enter an unique DNS name for the public IP"
+
+New-AzResourceGroup -Name $resourceGroupName -Location "$location"
+New-AzResourceGroupDeployment `
+    -ResourceGroupName $resourceGroupName `
+    -TemplateUri "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-windows/azuredeploy.json" `
+    -adminUsername $adminUsername `
+    -adminPassword $adminPassword `
+    -dnsLabelPrefix $dnsLabelPrefix
+
+ (Get-AzVm -ResourceGroupName $resourceGroupName).name
+
+New-AzResourceGroup -Name $resourceGroupName -Location "$location"
+New-AzResourceGroupDeployment `
+    -ResourceGroupName $resourceGroupName `
+    -TemplateFile ./createVM.json `
+    -adminUsername $adminUsername `
+    -adminPassword $adminPassword `
+    -dnsLabelPrefix $dnsLabelPrefix
+
+ (Get-AzVm -ResourceGroupName $resourceGroupName).name
+
+ Create an image from VM
+ $vmName = "SimpleWinVM"
+ $rgName = "myResourceGroup"
+ $location = "westeurope"
+ $imageName = "myImage"
+ Stop-AzVM -ResourceGroupName $rgName -Name $vmName -Force
+ Set-AzVm -ResourceGroupName $rgName -Name $vmName -Generalized
+ $vm = Get-AzVM -Name $vmName -ResourceGroupName $rgName
+ $image = New-AzImageConfig -Location $location -SourceVirtualMachineId $vm.Id
+ New-AzImage -Image $image -ImageName $imageName -ResourceGroupName $rgName
